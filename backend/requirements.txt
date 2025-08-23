@@ -1,0 +1,11 @@
+# Backend dependencies
+flask==2.3.2           # for API server (use FastAPI if you prefer)
+gunicorn==21.2.0       # for deployment (Cloud Run/Heroku)
+
+# Google Cloud SDKs
+google-cloud-aiplatform==1.48.0   # Vertex AI SDK
+google-cloud-storage==2.11.0      # if you want to store any files
+
+# Data + Utils
+pandas==2.1.4          # for handling data if needed
+numpy==1.26.3          # for calculations
