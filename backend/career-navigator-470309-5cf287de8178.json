@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "career-navigator-470309",
+  "private_key_id": "5cf287de8178d10da5c98f153ebd2024393c7958",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDhkb21NB13DpqD\nDA4I/tDPzmcpdw/KScbUXIOn8aDEBQHOrZLdQG9AW/tFsQ3TvF4dh+QY/iv3v+Va\nVe1x9J4J+oohn22YLlsW4cZqmra6vTtvNkH+/ZNlgoRQOj/5ZvD/vmuMhoqdqN08\nWLk3SpjlcnDYD9derkIU16P8PdIOJ3zwpQNfmKzB71jr5qYsu3x1D+ylwry/frF1\ntcCDq+AQPMr5KmLXiiTAxN27355sOIltdx3e+jQw+Vvbw7WubQJK+WvABHiGFnw4\nrfsEejncBXpAH+/PGyQMkvF9XMHxltmfTokBNC8k/w7e+kO4E3eIdU6j07SyNk0N\nzCGUCH3/AgMBAAECggEAELX31xnxHuCwQLTJa2WD+bPW/62S4rpxe5+49IhZj9Fh\nJLsbg2midE2m1q8QZlcbpStr52VubhsYy4b3IXdCUrHtaXftVMCxEzJkZ9cQt303\nudGhX68l1szYWYs0hxkBvKiSQNBiKjOYOZVxxJoHAWSSMzzaiJNMpkz4GJf0h64b\nQKV+EfcBGr3YKqTL3ti8w5BahhuRXZzafH5rEd6ZL5JR96ViisbagR5wCRX7iyOH\nBLe3aKADBcv5bdcdJrpT9nUrLnwhKTBvb/sJRNz/s7WmM4+TQgKTAfsS9sa8MJ5y\nb5TUaNcIMh1qfwFTn/av1C4gabogZJlP8KifXUdI3QKBgQD71f1Erqv7qMXBtBBy\ndlMcl/by5YXJP9M7i6UgCMpJ+ciLa5cQMiXIhaqJYwPFPj1sV9faX2ECHt2Mt1UD\nNRXipLS/lbTOqCw/VV8r2tsubBmOSAmPtNt2+PLbV33wEs54CUIW1Wd3a+F+1Lpk\n2MOINNDQ+Kr/I9rGosaqJYta2wKBgQDlTJD7S23nvvmdGQvBMKQ9kzPqJUtCXoli\nfgpbldnk2ne3qK0j+U3ms/36+1iM67Lr7f5yiiFoq9OYj8zyncjocAyAdHttpyuP\nch8IrQMwIhqXE2c1CZHDR9+yOE5AhHiekpS6osgwpT+7n5Lox04MMXOC1bU4ohWU\niG5dyPPIrQKBgQDzhDzfiTfspYp0gDXXOOutHpVA0wjHTdxoG+SUUWuqlMqDZoow\nsw0uFXKOXxxqQoEKnvauxsP7VPVO+IhQDakX+8R77btkieIfa+IXeg2vmgAsQSRd\nvbjqFlhgGP5Cgyz7jZhGlBz0sXDfP7ztf12z+75gE9Tl2jnXEdeg96UFOQKBgGGR\n/hNgWmkFg5PMp4rSVuD4tVuJ+QdJ0O3/MgscrbZLHCwjc2FeYT6tEoLs1xZH6T+p\nat90VZkDnKtLbWtDpsz5eOhkKG1VeBy28+uuKzAdIvFsSTtxUfwlplNg0DN16xmW\nyADO6Z6Bgqgk08+Hl3dqx3tB0rZBiitFDqmLq+iVAoGBANptMDcYuQbMJSbesxSk\n13uNXzoVMiOyvnPJRsKBWrDyj+BdmvqIw7sqqr4PtnUJZ4+QEx9MOsLAPm4zS8aS\nvHXU8454lLb1xwOZ97NMQiC9NhHi1u0KrwxbXwghsUFfGqqP4b4GIo4zJwc7A63V\nr6Ww05k1gi+Va2ibqia2Drir\n-----END PRIVATE KEY-----\n",
+  "client_email": "vertex-ai-user@career-navigator-470309.iam.gserviceaccount.com",
+  "client_id": "117122517593817897337",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/vertex-ai-user%40career-navigator-470309.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
