@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from dotenv import load_dotenv
 
 # Vertex AI (Gemini) SDK
@@ -18,108 +19,135 @@ vertex_init(project=PROJECT_ID, location=LOCATION)
 # Reusable model object
 _model = GenerativeModel(MODEL)
 
+
 def _safe_json(text, fallback):
+    """Try to parse JSON safely, fallback if invalid."""
     try:
         return json.loads(text)
     except Exception:
+        m = re.search(r'(\{.*\}|\[.*\])', text, re.S)
+        if m:
+            try:
+                return json.loads(m.group(1))
+            except Exception:
+                return fallback
         return fallback
 
+
+def _call_model(prompt, temperature=0.6, max_tokens=1000):
+    resp = _model.generate_content(
+        [prompt],
+        generation_config=GenerationConfig(
+            temperature=temperature,
+            max_output_tokens=max_tokens,
+        )
+    )
+    return (resp.text or "").strip()
+
+# ---- Wrappers for backward compatibility ---- #
 def generate_career_suggestions(interests, skills, education):
     """
-    Returns a list of 3 careers:
-      [{ "name": "...", "demand": "High/Medium/Emerging", "desc": "..." }, ...]
+    Old API compatibility.
+    Returns a simple list of career objects for results.html
     """
-    prompt = f"""
-You are a helpful career advisor for Indian students.
+    all_maps = generate_all_roadmaps(interests, skills, education)
+    return [{"name": c,
+             "why_match": f"Suggested because you mentioned {c}",
+             "desc": f"Personalized roadmap available for {c}."}
+            for c in all_maps.keys()]
 
-Student profile:
+
+def generate_roadmap(career, interests="", skills="", education=""):
+    """
+    Old API compatibility.
+    Returns roadmap dict for a single career.
+    """
+    all_maps = generate_all_roadmaps(interests, skills, education)
+    return all_maps.get(career, {})
+
+# ------------------ Generate roadmaps for ALL mentioned careers ------------------ #
+def generate_all_roadmaps(interests, skills="", education=""):
+    """
+    Takes multiple careers from interests input (comma/semicolon separated).
+    Returns a dict with roadmaps for EACH career, where each career has 3 paths:
+      dream_path, skill_path, hybrid_path
+    """
+    careers = [c.strip() for c in re.split(r'[;,]', interests) if c.strip()]
+    if not careers:
+        careers = ["General Career"]  # fallback if user didn't specify
+
+    results = {}
+
+    for career in careers:
+        prompt = f"""
+You are a career mentor for Indian students.
+
+Student Profile:
 - Interests: {interests}
-- Skills: {skills or "None provided"}
+- Skills: {skills or "Beginner"}
 - Education Level: {education}
+- Target Career: {career}
 
 Task:
-Suggest exactly 3 suitable career paths in India.
-For EACH career, return:
-- name (short)
-- demand (High, Medium, or Emerging)
-- desc (1 concise sentence in simple language)
+Create 3 ROADMAPS for this career:
+1. dream_path: based fully on interests (ideal path).
+2. skill_path: based on current skills (fallback realistic path).
+3. hybrid_path: combining interests + skills.
 
-Output ONLY valid JSON array. Example:
-[
-  {{"name": "Data Analyst", "demand": "High", "desc": "..." }},
-  ...
-]
+Each roadmap must include:
+- short_term: array of 3–5 clear steps (0–6 months)
+- mid_term: array of 3–5 steps (6–18 months)
+- long_term: array of 2–4 steps (2–3 years)
+- progress: readiness % (0–100)
+- badge: motivational string with one emoji
+
+Output JSON object with keys dream_path, skill_path, hybrid_path ONLY.
 """
-    resp = _model.generate_content(
-        [prompt],
-        generation_config=GenerationConfig(
-            temperature=0.4,
-            max_output_tokens=600,
-        )
-    )
-    fallback = [
-        {"name": "Data Analyst", "demand": "High", "desc": "Analyze data to find insights and support decisions."},
-        {"name": "Cloud Engineer", "demand": "Medium", "desc": "Build and manage apps and infrastructure on cloud."},
-        {"name": "UX Designer", "demand": "Emerging", "desc": "Design simple, user-friendly app and website experiences."}
-    ]
-    text = (resp.text or "").strip()
-    return _safe_json(text, fallback)
 
+        raw = _call_model(prompt, temperature=0.65, max_tokens=1200)
 
-def generate_roadmap(career):
-    """
-    Returns a roadmap dict:
-    {
-      "short_term": "...",
-      "mid_term": "...",
-      "long_term": "...",
-      "progress": 0-100,
-      "badge": "..."
-    }
-    """
-    prompt = f"""
-Create a clear, practical career roadmap for the role: {career}.
-Audience: Indian student; keep it simple and action-focused.
+        fallback = {
+            "dream_path": {
+                "short_term": [f"Research about {career}", "Take beginner course", "Follow experts in this field"],
+                "mid_term": [f"Do 2–3 projects related to {career}", "Find a mentor"],
+                "long_term": [f"Work towards a role in {career}"],
+                "progress": 25,
+                "badge": "🌟 Dream Chaser"
+            },
+            "skill_path": {
+                "short_term": [f"Apply your current skills ({skills or 'general skills'}) in small projects"],
+                "mid_term": ["Take certification to strengthen skills", "Do freelance work"],
+                "long_term": ["Enter jobs that use these skills"],
+                "progress": 40,
+                "badge": "💪 Skill Builder"
+            },
+            "hybrid_path": {
+                "short_term": [f"Do a small project combining your skills and {career}"],
+                "mid_term": ["Build portfolio mixing skills + interests", "Intern in crossover roles"],
+                "long_term": [f"Transition into {career} role using both skills and passion"],
+                "progress": 35,
+                "badge": "⚡ Creative Blend"
+            }
+        }
 
-Split into:
-- short_term (0–6 months): concrete skills/courses to start
-- mid_term (6–18 months): projects/certifications/internships
-- long_term (2–3 years): job roles and next growth steps
-Also include:
-- progress: an estimated readiness % for a beginner (0–100)
-- badge: a short motivational badge with one emoji
+        data = _safe_json(raw, fallback)
 
-Output ONLY a single JSON object with these keys:
-{{
-  "short_term": "...",
-  "mid_term": "...",
-  "long_term": "...",
-  "progress": 55,
-  "badge": "Skill Unlocked: Python Basics 🏅"
-}}
-"""
-    resp = _model.generate_content(
-        [prompt],
-        generation_config=GenerationConfig(
-            temperature=0.5,
-            max_output_tokens=700,
-        )
-    )
-    fallback = {
-        "short_term": "Learn Python and SQL basics; practice with small datasets.",
-        "mid_term": "Build 2 projects, take one certification, start applying for internships.",
-        "long_term": "Land an entry-level role; keep improving with real-world projects.",
-        "progress": 50,
-        "badge": "Momentum Unlocked 🚀"
-    }
-    text = (resp.text or "").strip()
-    data = _safe_json(text, fallback)
+        # Ensure structure
+        for key in ["dream_path", "skill_path", "hybrid_path"]:
+            if key not in data:
+                data[key] = fallback[key]
+            # fix formatting (short_term, mid_term, long_term must be lists)
+            for term in ["short_term", "mid_term", "long_term"]:
+                val = data[key].get(term, [])
+                if isinstance(val, str):
+                    data[key][term] = [val]
+                elif not isinstance(val, list):
+                    data[key][term] = fallback[key][term]
+            if "progress" not in data[key]:
+                data[key]["progress"] = fallback[key]["progress"]
+            if "badge" not in data[key]:
+                data[key]["badge"] = fallback[key]["badge"]
 
-    # Normalize keys in case the model returns different casing
-    return {
-        "short_term": data.get("short_term", fallback["short_term"]),
-        "mid_term": data.get("mid_term", fallback["mid_term"]),
-        "long_term": data.get("long_term", fallback["long_term"]),
-        "progress": int(data.get("progress", fallback["progress"])),
-        "badge": data.get("badge", fallback["badge"]),
-    }
+        results[career] = data
+
+    return results

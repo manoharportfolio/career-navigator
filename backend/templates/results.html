@@ -16,7 +16,8 @@
           <h5 class="card-title">{{ career.name }}</h5>
           <p class="card-text"><strong>Demand:</strong> {{ career.demand }}</p>
           <p>{{ career.desc }}</p>
-          <a href="{{ url_for('roadmap', career_name=career.name) }}" class="btn btn-outline-primary">View Roadmap</a>
+          <a href="{{ url_for('roadmap', career_name=career.name, interests=interests, skills=skills, education=education) }}"
+   class="btn btn-outline-primary">View Roadmap</a>
         </div>
       </div>
     </div>
