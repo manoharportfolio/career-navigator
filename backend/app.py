@@ -3,8 +3,6 @@ from services.ai_service import generate_career_suggestions, generate_roadmap
 
 app = Flask(__name__)
 
-from services.ai_service import generate_all_roadmaps
-
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
@@ -12,10 +10,8 @@ def home():
         skills = request.form.get("skills", "")
         education = request.form.get("education", "College")
 
-        # Generate roadmaps for all careers mentioned
-        roadmaps = generate_all_roadmaps(interests, skills, education)
-
-        return render_template("results.html", roadmaps=roadmaps, 
+        careers = generate_career_suggestions(interests, skills, education)
+        return render_template("results.html", careers=careers,
                                interests=interests, skills=skills, education=education)
     return render_template("index.html")
 
@@ -26,11 +22,8 @@ def roadmap(career_name):
     skills = request.args.get("skills", "")
     education = request.args.get("education", "College")
 
-    all_roadmaps = generate_all_roadmaps(interests, skills, education)
-    roadmap = all_roadmaps.get(career_name, {})
-
+    roadmap = generate_roadmap(career_name, interests, skills, education)
     return render_template("roadmap.html", career=career_name, roadmap=roadmap)
-
 
 
 if __name__ == "__main__":

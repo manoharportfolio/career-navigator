@@ -1,33 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Career Navigator 🚀</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Navigator 🚀</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container py-5">
-  <h1 class="mb-4 text-center">🚀 Career Navigator</h1>
-  <p class="lead text-center">Discover your personalized career roadmap with AI</p>
-  <form method="POST" class="card p-4 shadow">
-    <div class="mb-3">
-      <label class="form-label">✨ Interests</label>
-      <input type="text" name="interests" class="form-control" placeholder="e.g. coding, design, business">
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="h2">🚀 Career Navigator</h1>
+                <p class="lead text-muted">Enter your interests to generate an AI-powered career roadmap.</p>
+            </div>
+            <div class="card p-4 shadow-sm">
+                <form action="{{ url_for('results') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="interests" class="form-label"><strong>✨ Your Interests</strong></label>
+                        <input type="text" name="interests" id="interests" class="form-control" placeholder="e.g. Data Science, UI/UX Design, Cloud Computing" required>
+                        <div class="form-text">Separate multiple interests with a comma (e.g., AI, Robotics).</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="skills" class="form-label"><strong>🛠️ Your Skills (Optional)</strong></label>
+                        <input type="text" name="skills" id="skills" class="form-control" placeholder="e.g. Python, Figma, Public Speaking">
+                    </div>
+                    <div class="mb-3">
+                        <label for="education" class="form-label"><strong>🎓 Education Level</strong></label>
+                        <select name="education" id="education" class="form-select">
+                            <option>School</option>
+                            <option selected>College</option>
+                            <option>Graduate</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Generate Roadmap Ideas</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">🛠️ Skills (optional)</label>
-      <input type="text" name="skills" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">🎓 Education Level</label>
-      <select name="education" class="form-select">
-        <option value="School">School</option>
-        <option value="College">College</option>
-        <option value="Graduate">Graduate</option>
-      </select>
-    </div>
-    <button type="submit" class="btn btn-primary w-100">Generate Career Suggestions</button>
-  </form>
-</div>
 </body>
 </html>

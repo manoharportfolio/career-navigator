@@ -44,26 +44,6 @@ def _call_model(prompt, temperature=0.6, max_tokens=1000):
     )
     return (resp.text or "").strip()
 
-# ---- Wrappers for backward compatibility ---- #
-def generate_career_suggestions(interests, skills, education):
-    """
-    Old API compatibility.
-    Returns a simple list of career objects for results.html
-    """
-    all_maps = generate_all_roadmaps(interests, skills, education)
-    return [{"name": c,
-             "why_match": f"Suggested because you mentioned {c}",
-             "desc": f"Personalized roadmap available for {c}."}
-            for c in all_maps.keys()]
-
-
-def generate_roadmap(career, interests="", skills="", education=""):
-    """
-    Old API compatibility.
-    Returns roadmap dict for a single career.
-    """
-    all_maps = generate_all_roadmaps(interests, skills, education)
-    return all_maps.get(career, {})
 
 # ------------------ Generate roadmaps for ALL mentioned careers ------------------ #
 def generate_all_roadmaps(interests, skills="", education=""):
@@ -101,7 +81,7 @@ Each roadmap must include:
 - progress: readiness % (0–100)
 - badge: motivational string with one emoji
 
-Output JSON object with keys dream_path, skill_path, hybrid_path ONLY.
+Output ONLY valid JSON with keys dream_path, skill_path, hybrid_path.
 """
 
         raw = _call_model(prompt, temperature=0.65, max_tokens=1200)
@@ -151,3 +131,23 @@ Output JSON object with keys dream_path, skill_path, hybrid_path ONLY.
         results[career] = data
 
     return results
+
+
+# ------------------ Wrappers (for old app.py imports) ------------------ #
+def generate_career_suggestions(interests, skills, education):
+    """
+    Returns list of career objects for results.html
+    """
+    all_maps = generate_all_roadmaps(interests, skills, education)
+    return [{"name": c,
+             "why_match": f"You mentioned {c} in your interests.",
+             "desc": f"Personalized roadmap available for {c}."}
+            for c in all_maps.keys()]
+
+
+def generate_roadmap(career, interests="", skills="", education=""):
+    """
+    Returns roadmap dict for a single career.
+    """
+    all_maps = generate_all_roadmaps(interests, skills, education)
+    return all_maps.get(career, {})
