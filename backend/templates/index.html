@@ -18,7 +18,7 @@
                 <p class="lead text-muted">Enter your interests to generate an AI-powered career roadmap.</p>
             </div>
             <div class="card p-4 shadow-sm">
-                <form action="{{ url_for('results') }}" method="POST">
+                <form action="{{ url_for('home') }}" method="POST">
                     <div class="mb-3">
                         <label for="interests" class="form-label"><strong>✨ Your Interests</strong></label>
                         <input type="text" name="interests" id="interests" class="form-control" placeholder="e.g. Data Science, UI/UX Design, Cloud Computing" required>

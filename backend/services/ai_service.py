@@ -1,153 +1,109 @@
 import os
-import json
 import re
+import json
 from dotenv import load_dotenv
-
-# Vertex AI (Gemini) SDK
+from google.oauth2 import service_account
 from vertexai import init as vertex_init
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
+# ------------------------------------------------
+# Load environment variables
+# ------------------------------------------------
 load_dotenv()
 
 PROJECT_ID = os.getenv("PROJECT_ID")
 LOCATION = os.getenv("LOCATION", "us-central1")
 MODEL = os.getenv("MODEL", "gemini-1.5-flash").strip('"').strip("'")
+CRED_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
-# Init Vertex AI
-vertex_init(project=PROJECT_ID, location=LOCATION)
+# ------------------------------------------------
+# Force-load service account credentials
+# ------------------------------------------------
+if not CRED_PATH or not os.path.exists(CRED_PATH):
+    raise FileNotFoundError(f"❌ Service account key not found at {CRED_PATH}")
 
-# Reusable model object
+credentials = service_account.Credentials.from_service_account_file(CRED_PATH)
+
+vertex_init(
+    project=PROJECT_ID,
+    location=LOCATION,
+    credentials=credentials
+)
+
+print(f"✅ Vertex AI initialized with project={PROJECT_ID}, location={LOCATION}, creds={CRED_PATH}")
+
+# ------------------------------------------------
+# Global model instance
+# ------------------------------------------------
 _model = GenerativeModel(MODEL)
 
 
-def _safe_json(text, fallback):
-    """Try to parse JSON safely, fallback if invalid."""
+# ------------------------------------------------
+# Helper: Call Gemini model
+# ------------------------------------------------
+def _call_model(prompt, temperature=0.6, max_tokens=1024):
+    """Call Gemini model and return cleaned text output."""
+    config = GenerationConfig(temperature=temperature, max_output_tokens=max_tokens)
+    resp = _model.generate_content(prompt, generation_config=config)
+    if not resp or not resp.candidates or not resp.candidates[0].content.parts:
+        return "⚠️ No response from model."
+    return resp.candidates[0].content.parts[0].text
+
+
+# ------------------------------------------------
+# Generate multiple roadmaps (interest-based, skill-based, combined)
+# ------------------------------------------------
+def generate_all_roadmaps(interests: str, skills: str, education: str):
+    """
+    Returns 3 types of career roadmaps:
+    1. Based only on interests
+    2. Based only on skills
+    3. Based on both (combined)
+    """
+
+    prompt = f"""
+    A student has the following:
+    - Interests: {interests}
+    - Skills: {skills}
+    - Education: {education}
+
+    Generate three separate career roadmap sets:
+
+    1. **Interest-Based Roadmaps**
+       For each interest mentioned, suggest possible careers and a step-by-step roadmap
+       (short-term 0–6 months, mid-term 6–18 months, long-term 2–3 years).
+
+    2. **Skill-Based Roadmaps**
+       For each skill mentioned, suggest possible careers they can realistically pursue if
+       their interests do not work out. Provide the same step-by-step roadmap.
+
+    3. **Combined Roadmaps**
+       Suggest careers that merge both their interests and skills (creative intersections).
+       Provide the roadmap.
+
+    Make sure to cover *all interests and skills individually*, not just 3 careers.
+    Format output clearly as JSON with keys: "interest_based", "skill_based", "combined".
+    """
+
+    raw = _call_model(prompt, temperature=0.65, max_tokens=1800)
+
+    # Try parsing into JSON safely
     try:
-        return json.loads(text)
+        cleaned = re.sub(r"```(json|JSON)?", "", raw).replace("```", "").strip()
+        return json.loads(cleaned)
     except Exception:
-        m = re.search(r'(\{.*\}|\[.*\])', text, re.S)
-        if m:
-            try:
-                return json.loads(m.group(1))
-            except Exception:
-                return fallback
-        return fallback
+        return {"error": "Failed to parse model response", "raw_output": raw}
 
 
-def _call_model(prompt, temperature=0.6, max_tokens=1000):
-    resp = _model.generate_content(
-        [prompt],
-        generation_config=GenerationConfig(
-            temperature=temperature,
-            max_output_tokens=max_tokens,
-        )
-    )
-    return (resp.text or "").strip()
-
-
-# ------------------ Generate roadmaps for ALL mentioned careers ------------------ #
-def generate_all_roadmaps(interests, skills="", education=""):
-    """
-    Takes multiple careers from interests input (comma/semicolon separated).
-    Returns a dict with roadmaps for EACH career, where each career has 3 paths:
-      dream_path, skill_path, hybrid_path
-    """
-    careers = [c.strip() for c in re.split(r'[;,]', interests) if c.strip()]
-    if not careers:
-        careers = ["General Career"]  # fallback if user didn't specify
-
-    results = {}
-
-    for career in careers:
-        prompt = f"""
-You are a career mentor for Indian students.
-
-Student Profile:
-- Interests: {interests}
-- Skills: {skills or "Beginner"}
-- Education Level: {education}
-- Target Career: {career}
-
-Task:
-Create 3 ROADMAPS for this career:
-1. dream_path: based fully on interests (ideal path).
-2. skill_path: based on current skills (fallback realistic path).
-3. hybrid_path: combining interests + skills.
-
-Each roadmap must include:
-- short_term: array of 3–5 clear steps (0–6 months)
-- mid_term: array of 3–5 steps (6–18 months)
-- long_term: array of 2–4 steps (2–3 years)
-- progress: readiness % (0–100)
-- badge: motivational string with one emoji
-
-Output ONLY valid JSON with keys dream_path, skill_path, hybrid_path.
-"""
-
-        raw = _call_model(prompt, temperature=0.65, max_tokens=1200)
-
-        fallback = {
-            "dream_path": {
-                "short_term": [f"Research about {career}", "Take beginner course", "Follow experts in this field"],
-                "mid_term": [f"Do 2–3 projects related to {career}", "Find a mentor"],
-                "long_term": [f"Work towards a role in {career}"],
-                "progress": 25,
-                "badge": "🌟 Dream Chaser"
-            },
-            "skill_path": {
-                "short_term": [f"Apply your current skills ({skills or 'general skills'}) in small projects"],
-                "mid_term": ["Take certification to strengthen skills", "Do freelance work"],
-                "long_term": ["Enter jobs that use these skills"],
-                "progress": 40,
-                "badge": "💪 Skill Builder"
-            },
-            "hybrid_path": {
-                "short_term": [f"Do a small project combining your skills and {career}"],
-                "mid_term": ["Build portfolio mixing skills + interests", "Intern in crossover roles"],
-                "long_term": [f"Transition into {career} role using both skills and passion"],
-                "progress": 35,
-                "badge": "⚡ Creative Blend"
-            }
-        }
-
-        data = _safe_json(raw, fallback)
-
-        # Ensure structure
-        for key in ["dream_path", "skill_path", "hybrid_path"]:
-            if key not in data:
-                data[key] = fallback[key]
-            # fix formatting (short_term, mid_term, long_term must be lists)
-            for term in ["short_term", "mid_term", "long_term"]:
-                val = data[key].get(term, [])
-                if isinstance(val, str):
-                    data[key][term] = [val]
-                elif not isinstance(val, list):
-                    data[key][term] = fallback[key][term]
-            if "progress" not in data[key]:
-                data[key]["progress"] = fallback[key]["progress"]
-            if "badge" not in data[key]:
-                data[key]["badge"] = fallback[key]["badge"]
-
-        results[career] = data
-
-    return results
-
-
-# ------------------ Wrappers (for old app.py imports) ------------------ #
-def generate_career_suggestions(interests, skills, education):
-    """
-    Returns list of career objects for results.html
-    """
+# ------------------------------------------------
+# Public API for Flask
+# ------------------------------------------------
+def generate_career_suggestions(interests: str, skills: str, education: str):
+    """Main function Flask calls: returns structured roadmaps."""
     all_maps = generate_all_roadmaps(interests, skills, education)
-    return [{"name": c,
-             "why_match": f"You mentioned {c} in your interests.",
-             "desc": f"Personalized roadmap available for {c}."}
-            for c in all_maps.keys()]
+    return all_maps
 
 
-def generate_roadmap(career, interests="", skills="", education=""):
-    """
-    Returns roadmap dict for a single career.
-    """
-    all_maps = generate_all_roadmaps(interests, skills, education)
-    return all_maps.get(career, {})
+def generate_roadmap(interests: str, skills: str, education: str):
+    """Alias to maintain compatibility with app.py"""
+    return generate_all_roadmaps(interests, skills, education)
