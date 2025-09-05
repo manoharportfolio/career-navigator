@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "career-navigator-470309",
+  "private_key_id": "847207d5b412d71fcb9213b713694c55530e49b3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDY1LgT2ei2WNFX\nU54g8Wv60lVp3CbTah2NTRD5YuSSI0Xu8WQaRJL6sNh8dJ3no1HEqUGpCBPANhdy\n5F5VkHlW52PvGV9dtgrw9HriFLhVEGW8ow4hy+i/DuhPstNxm3KWNM/Vq2JbH0y3\nvcnNRrmo7j8dY26oKWxZYOolVZoIRVFGmDHRVynr9cOuC3utmL9GleXdjQvmxCRK\nL5IjYG7GJW59hVmlRwtr4SvzZE3PejFNUITdUPWO6vDQSUPzAizhD9Wbw29GurCT\n18oDh0uVSQxC89lCYALbfodKJG2z5E878NXDwCqfCbOtG5ZAkj50aB8k966g9fux\nf6svWV9xAgMBAAECggEAK7YgYNIcXYxEsX3YIiyBN+iIkwVwZ0zcZcSsQBYtXX+S\nZNPRehEqbzLRBa/tuEl+na6AX97Sunw9GGqM0OOF7pzJkuUyyj29cWtbzXFfYrii\nRde6LNqCUmfjMdPrV9r+S+UcI+c/tf52lRED2mfgXDuhSh+mKmzlXJRSx5F88p8F\nbU0Y1YCr7w7Npp25pHbaOyScJvghGRGdpF3MtSPeYjyK0gckw6TF3Ur2yfqncvAt\nzrroOX3pPZJcvaNvOvm9TDID+Go+r2/AdRmClk0cItBGPb35dyvhZ4SojJ4YMxp/\nLvgas/vsXrppn4///1lQAk+At09cqisrAqLbTc+9BQKBgQD/2/m75szo95sX6Crc\nKR5Dnz8zwfJ7Y1FH4aDrlL+cd9bCxE09V/v6DzA2Z6yd1h6g3pnMv9RS5ROPie9G\nlEqF3HPT1dNA9pQ22O6jZUI1WB4F+gfWFsIbWXZ9THJyW236BCQ43+nP+3gSGatk\ny7MWQsk8JwfD/H5XpFBB7BHkJQKBgQDY8z+YNMWk/yvlfiqtAnr2shw+vMsCgLFr\nXD1YNqgT3qaLAS4YygersjauU+2kqAHKxIxfUFLl+nh4w6IKJpG1IpuvGph8ItRV\nvaS7pKfP9NE2aBNRnnIxoquTtdf7qVO5s4iCmBdlDkpLPRzaVkZV9sr0H+Nyuq0g\ncGpywkwmXQKBgC5OTJtiQRGkxnAEN8WSt4R7jL+8STtllS9SOYKJcEhMNBUZ2/TP\nOK5gE1S1XLtQJkjtIJ661R2PkgO3bhOzAO3LITdkipBGUDrA9ieiSuJGqWBhiQuJ\nIOY8QcKZlFj4DSZjm36jn7hhhbCY7rkWWLodqjf1xGUHDIKmHVRg+jf1AoGAOHl5\nwIFcQcs6/g6NxWOz5qwOtjYnEou1o6DrRx9TOXjoGZ9BBKryvDs0CMVIQ2iIruPj\nNpyON9evrKAgekv3+hL8O+TMdOQMKhWn4EDIflXYcDU/ciuwxkL2LwlTI+u8I8cc\nbgJxdJj3tgY+kIeM36vSwSHb722wy5T34M+7SvECgYEAmPhuPBPqFtLIpQc7KkQ0\nPDhplqjLU0fFAShu8tUXqFPcRIDfvVE2T0bQu5ed6E93hc7GPtU1ELG/KX5AUKHz\nqyYA9S7NOoXePotNH7C9LUxKsWLwfN7sfktI8Ip4A68Gjs0k5XJYVaYMv5loNbBc\nUvMsptLMk5C57KSgngDdH7c=\n-----END PRIVATE KEY-----\n",
+  "client_email": "career-navigator-service@career-navigator-470309.iam.gserviceaccount.com",
+  "client_id": "117435761610318423470",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/career-navigator-service%40career-navigator-470309.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
