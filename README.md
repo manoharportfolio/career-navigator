@@ -9,12 +9,12 @@ No resume required — just enter your interests and skills to get clear guidanc
 - Visual progress tracker with badges  
 
 ## Tech Stack
-- Google Cloud Vertex AI  
-- Firebase (Auth, Firestore, Hosting)  
+- Google Cloud Vertex AI   
 - Backend: Flask / FastAPI  
 - Frontend: Streamlit / React  
 
 ## Setup
 Clone this repo:
 ```bash
-git clone https://github.com/<your-username>/career-navigator.git
+git clone https://github.com/manoharportfolio/career-navigator.git
+python -m backend.app
