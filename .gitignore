@@ -1,0 +1,6 @@
+# Ignore secrets
+.env
+*.json
+
+# But allow example configs
+!.env.example
