@@ -56,4 +56,10 @@ python -m backend.app
 python --version
 ```
 ## 📜 License
-MIT License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, modify, and distribute this software for personal or commercial purposes, provided that the original copyright notice and license text are included.
+
+See the [LICENSE](LICENSE) file for full details.
+
